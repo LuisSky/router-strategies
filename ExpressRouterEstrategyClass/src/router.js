@@ -1,46 +1,13 @@
 
-// file:  Models/ user-model.js
-class UserModel {
-  async find(userData) {
-    return { id: `${userData.id}`, name: 'Any User', mail: 'any@mail.com', password: 'anypass' }
-  }
-}
+const express = require('express')
+const UserController = require('./controllers/user-controller.js')
+const ExpressAdapter = require('./config/express-adapter.js')
 
-// file:  Controllers/user-controller.js
-class UserController {
-  async getUser(httpRequest) {
 
-    const { user_id } = httpRequest.body
+const router = express.Router()
 
-    const user = await new UserModel().find({ id: user_id })
-
-    return {
-      statusCode: 200,
-      body: user
-    }
-  }
-}
-
-// File: Helpers/express-adapter.js
-class ExpressAdapter {
-  static adapt(route) {
-    return async (req, res) => {
-      const httpRequest = {
-        body: req.body
-      }
-      const httpResponse = await route.getUser(httpRequest)
-
-      res.status(httpResponse.statusCode).json(httpResponse.body)
-    }
-  }
-}
-
-//  file: config/routes.js
-const express = require('express');
-const router = express.Router();
-
-const User = new UserController()
-router.post('/users', ExpressAdapter.adapt(User))
+const UserRoute = new UserController()
+router.post('/users', ExpressAdapter.adapt(UserRoute))
 
 module.exports = router
 
